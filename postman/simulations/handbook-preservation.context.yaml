@@ -1,0 +1,37 @@
+purpose:
+  stands_in_for: Internet Archive Save Page Now, job status, availability and raw replay
+  unblocks: Local HTTP verification without creating captures or using real credentials
+assumptions:
+  - id: spn-contract
+    status: supported
+    claim: The integration uses a form-encoded POST followed by job status and a timestamped replay.
+    reason: The official SPN2 document and the Internet Archive Open Library client describe these operations.
+    verification: Read the official documentation revision dated 2026-07-22 on 2026-10-29; the subset is in postman/contracts/save-page-now.yaml.
+    source: https://docs.google.com/document/d/1Nsv52MvSjbLb2PCpHlat0gkzw0EvtSgpKHu4mk0MnrA/
+    updated_at: '2026-10-29'
+  - id: client-local-http
+    status: supported
+    claim: In the ten simulated English/Portuguese scenarios the client verified matching captures, rejected mismatches, respected rate limits, and reconciled an uncertain POST without resubmitting it.
+    reason: The real CaptureWorker ran over HTTP against the local simulation; request logs confirmed submission, status, availability and replay paths.
+    verification: scripts/test_capture_simulation.py passed ten scenarios on 2026-10-29 with Postman CLI 1.75.0. The transport maps provider URLs onto one local route and preserves the original response URL; provider TLS and production availability are not tested.
+    source: scripts/test_capture_simulation.py
+    updated_at: '2026-10-29'
+  - id: production-capture
+    status: unknown
+    claim: Live Save Page Now submissions can complete and produce matching replays with this account.
+    reason: IA_ACCESS_KEY and IA_SECRET_KEY are not configured. No real submission or successful live replay is claimed.
+    verification: Environment presence checked without displaying values. Existing-archive queries returned HTTP 429 and the CDX index returned HTTP 503 during historical recovery.
+    source: editions/por/download-status.json
+    updated_at: '2026-10-29'
+  - id: mock-ownership
+    status: supported
+    claim: This is a local contract-based mock, not a published Internet Archive-owned mock.
+    reason: The Postman workspace search could not authenticate and returned 401; no owning-team resource was accessible.
+    verification: Built locally from the official contract subset; no mock or simulation was published.
+    source: postman/mocks/save-page-now/config.yaml
+    updated_at: '2026-10-29'
+fingerprints:
+  - id: local-development
+    date: '2026-10-29'
+    commit: c76c742 (working tree changes, not a clean checkout)
+    cli: Postman 1.75.0

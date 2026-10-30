@@ -1,0 +1,77 @@
+openapi: 3.0.3
+info:
+  title: Save Page Now (integration subset)
+  version: '2026-07-22'
+  description: >-
+    External API subset used by this project. Source is the Internet Archive's
+    Save Page Now 2 Public API Docs, linked from web.archive.org/save.
+  x-source: https://docs.google.com/document/d/1Nsv52MvSjbLb2PCpHlat0gkzw0EvtSgpKHu4mk0MnrA/
+servers:
+  - url: https://web.archive.org
+paths:
+  /save:
+    post:
+      summary: Submit an independent capture of an official URL
+      security:
+        - LowAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url: {type: string, format: uri}
+                capture_all: {type: string, enum: ['0']}
+                capture_outlinks: {type: string, enum: ['0']}
+                skip_first_archive: {type: string, enum: ['1']}
+                if_not_archived_within: {type: string, example: '3600'}
+      responses:
+        '200':
+          description: Capture accepted or recent capture reused
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: {type: string}
+                  job_id: {type: string}
+        '401': {description: Credentials required}
+        '429':
+          description: Rate limited
+          headers:
+            Retry-After: {schema: {type: string}}
+        '503': {description: Unavailable; submission outcome may be uncertain}
+  /save/status/{job_id}:
+    get:
+      summary: Follow a submitted capture
+      security:
+        - LowAuth: []
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema: {type: string}
+      responses:
+        '200':
+          description: Pending, success, or error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string, enum: [pending, success, error]}
+                  original_url: {type: string}
+                  timestamp: {type: string, pattern: '^\d{14}$'}
+                  status_ext: {type: string}
+        '404': {description: Job missing or expired; reconcile via availability}
+        '429': {description: Rate limited}
+        '503': {description: Temporarily unavailable}
+components:
+  securitySchemes:
+    LowAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: LOW access-key:secret-key; never store real keys in this contract
