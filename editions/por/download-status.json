@@ -1,0 +1,75 @@
+{
+  "2026-10": {
+    "status": "complete",
+    "attempted_at": "2026-10-29T22:30:33.372790+00:00",
+    "downloaded": 39,
+    "expected": 39
+  },
+  "2026-03": {
+    "status": "blocked",
+    "attempted_at": "2026-10-29T22:30:38.106290+00:00",
+    "error": "Archive lookup unavailable: 429 Client Error: Too Many Requests for url: https://archive.org/wayback/available?url=https%3A%2F%2Fwww.churchofjesuschrist.org%2Fstudy%2Fmanual%2Fgeneral-handbook%2F0-introductory-overview%3Flang%3Dpor&timestamp=20260930235959",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2025-12": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2025-02": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2024-08": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2024-05": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2023-08": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2022-08": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2021-12": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2021-07": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2021-03": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2020-12": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2020-07": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  },
+  "2020-03": {
+    "status": "pending",
+    "downloaded": 0,
+    "expected": 39
+  }
+}
