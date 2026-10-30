@@ -1,4 +1,8 @@
-WAYBACK_API = "https://archive.org/wayback/available?"
+WAYBACK_API = "https://archive.org/wayback/available"
+
+DEFAULT_LANGUAGE = "eng"
+LANGUAGES = ("eng", "por")
+REQUEST_TIMEOUT = 30
 
 WAYBACK_DELAY = 60.0 / 15.0 + 0.1  # 15 requests per minute
 

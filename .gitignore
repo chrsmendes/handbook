@@ -1,3 +1,11 @@
 *.pyc
 .vscode
 .envrc
+.venv/
+__pycache__/
+*.tmp
+.capture.lock
+.wayback.lock
+.env
+.env.*
+postman/.dependencies/

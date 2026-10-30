@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from urllib.parse import urlsplit
 
 TITLE_NUM_REGEX = r"(\d{1,2}(\.?\d{0,2}){0,3})"
 
@@ -11,8 +12,12 @@ class LinkSanitizer:
         self.cache = {}  # map section # to header slug
         self.files = {}  # map filename to markdown
 
-        with open(self.dir.parent / "missing.txt", "r", encoding="utf8") as f:
-            self.missing = f.read().splitlines()
+        missing_file = self.dir.parent / "missing.txt"
+        self.missing = (
+            missing_file.read_text(encoding="utf8").splitlines()
+            if missing_file.exists()
+            else []
+        )
         self.missing = [
             re.search(r"(\d+)[\.\-]", x.split("/")[-1]).group(1)  # type: ignore
             for x in self.missing
@@ -55,9 +60,19 @@ class LinkSanitizer:
             if self.rm_links:
                 return f"[{name}]"
 
+            # Resolve adaptation icons using the actual localized heading.
+            if name == "[AO]" and "0.2" in self.cache:
+                return f"[[AO]]({self.cache['0.2']})"
+
+            parts = urlsplit(link)
+            official = (
+                not parts.netloc or parts.hostname == "www.churchofjesuschrist.org"
+            )
             # If it's a chapter link or section number link
-            if link.startswith("/study/manual/general-handbook") and (
-                num := re.search(TITLE_NUM_REGEX, name)
+            if (
+                official
+                and parts.path.startswith("/study/manual/general-handbook/")
+                and (num := re.search(TITLE_NUM_REGEX, name))
             ):
                 num = num.group(1)
                 if num in self.cache:
@@ -69,12 +84,17 @@ class LinkSanitizer:
                         and file_num not in self.missing
                     ):
                         print(f"Missing num : {name}, {filename}")
-                    return f"[{name}](https://www.churchofjesuschrist.org{link})"
+                    target = (
+                        link
+                        if parts.netloc
+                        else f"https://www.churchofjesuschrist.org{link}"
+                    )
+                    return f"[{name}]({target})"
             # If it's a relative link
             elif link.startswith("/"):
                 return f"[{name}](https://www.churchofjesuschrist.org{link})"
             # If it's a valid external link already
-            elif link.startswith("http") or link.startswith("mailto"):
+            elif link.startswith(("http", "mailto", "#")) or parts.path.endswith(".md"):
                 return match.group(0)
             # Link to adapted/optional resources, we handled it earlier
             elif name == "[AO]":
@@ -88,7 +108,7 @@ class LinkSanitizer:
 
     def run(self):
         # Load in all files
-        for filename in self.dir.iterdir():
+        for filename in self.dir.glob("*.md"):
             with open(filename, "r", encoding="utf8") as f:
                 self.files[filename] = f.read()
 

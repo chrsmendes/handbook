@@ -8,7 +8,7 @@ class FillMissing:
         self.missing = []
         self.dir = dir
 
-    def find_missing(self, date: str):
+    def find_missing(self, date: str, verbose: bool = True):
         dir = self.dir / date
 
         # Figure our which files are missing
@@ -16,11 +16,12 @@ class FillMissing:
             filename = dir / f"{page}.md"
             if not filename.exists():
                 self.missing.append(filename)
-                print(page)
+                if verbose:
+                    print(page)
 
-    def save_missing(self, file: str = "missing.txt"):
+    def save_missing(self, file: str = "missing.txt", append: bool = True):
         # Save the missing files
-        with open(self.dir / file, "a", encoding="utf8") as f:
+        with open(self.dir / file, "a" if append else "w", encoding="utf8") as f:
             for filename in self.missing:
                 f.write(f"{filename}\n")
 
